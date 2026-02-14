@@ -36,3 +36,5 @@ export function useUser() {
 
     return { user, loading, error, updateUser };
 }
+
+export default useUser;

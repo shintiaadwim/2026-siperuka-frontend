@@ -1,6 +1,7 @@
 import type { BookingCreateDto, BookingListItem, BookingListResponse } from '../types/booking';
 
 const baseUrl = import.meta.env.VITE_API_URL
+const normalizedBaseUrl = baseUrl ? baseUrl.replace(/\/+$/, '') : ''
 
 function ensureBaseUrl() {
     if (!baseUrl) {
@@ -8,18 +9,20 @@ function ensureBaseUrl() {
     }
 }
 // Get all bookings with pagination
-export async function getBookings(page: number, pageSize: number) {
+export async function getBookings() {
     ensureBaseUrl();
-    const response = await fetch(`${baseUrl}/bookings?page=${page}&pageSize=${pageSize}`);
+    const url = new URL('/api/booking', normalizedBaseUrl);
+    const response = await fetch(url);
     if (!response.ok) {
         throw new Error('Failed to fetch bookings');
     }
-    return (await response.json()) as BookingListResponse;
+    return (await response.json()) as BookingListResponse[];
 }
 // Create a new booking
 export async function createBooking(dto: BookingCreateDto) {
     ensureBaseUrl();
-    const response = await fetch(`${baseUrl}/bookings`, {
+    const url = new URL('/api/booking', normalizedBaseUrl);
+    const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dto),
@@ -32,7 +35,8 @@ export async function createBooking(dto: BookingCreateDto) {
 // Update an existing booking
 export async function updateBooking(id: number, dto: BookingCreateDto) {
     ensureBaseUrl();
-    const response = await fetch(`${baseUrl}/bookings/${id}`, {
+    const url = new URL(`/api/booking/${id}`, normalizedBaseUrl);
+    const response = await fetch(url, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dto),
@@ -43,12 +47,13 @@ export async function updateBooking(id: number, dto: BookingCreateDto) {
     return (await response.json()) as BookingListItem;
 }
 // Update booking status
-export async function updateBookingStatus(id: number, statusId: number, changeBy: string, note?: string) {
+export async function updateBookingStatus(id: number, newStatusId: number, note?: string) {
     ensureBaseUrl();
-    const response = await fetch(`${baseUrl}/bookings/${id}/status`, {
-        method: 'PATCH',
+    const url = new URL(`/api/booking/${id}/status`, normalizedBaseUrl);
+    const response = await fetch(url, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ statusId, changeBy, note }),
+        body: JSON.stringify({ newStatusId, note }),
     });
     if (!response.ok) {
         throw new Error('Failed to update booking status');
@@ -58,7 +63,8 @@ export async function updateBookingStatus(id: number, statusId: number, changeBy
 // Delete a booking
 export async function deleteBooking(id: number) {
     ensureBaseUrl();
-    const response = await fetch(`${baseUrl}/bookings/${id}`, {
+    const url = new URL(`/api/booking/${id}`, normalizedBaseUrl);
+    const response = await fetch(url, {
         method: 'DELETE',
     });
     if (!response.ok) {
@@ -69,7 +75,8 @@ export async function deleteBooking(id: number) {
 // Booking history
 export async function getBookingHistory() {
     ensureBaseUrl();
-    const response = await fetch(`${baseUrl}/bookings/history/`);
+    const url = new URL('/booking/history/', normalizedBaseUrl);
+    const response = await fetch(url);
     if (!response.ok) {
         throw new Error('Failed to fetch booking history');
     }

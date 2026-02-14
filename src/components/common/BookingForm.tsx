@@ -1,22 +1,61 @@
-import { TextField, Button, Box, Stack, FormControl, InputLabel, Select, Paper, Typography } from "@mui/material";
-import type { BookingCreateForm } from '../../types/booking';
+import { TextField, Button, Box, Stack, FormControl, InputLabel, Select, Paper, Typography, MenuItem, CircularProgress } from "@mui/material";
+import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+
+interface BookingCreateForm {
+    roomId: string;
+    userId: string;
+    userName?: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    purpose: string;
+    statusId: string;
+}
 
 interface BookingCreateProps {
     value: BookingCreateForm;
     onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
     onChange: (booking: BookingCreateForm) => void;
+    bookings?: any[];
+    rooms?: any[];
+    users?: any[];
+    statuses?: any[];
+    statusLoading?: boolean;
 }
-
-export default function BookingCreate({ value, onSubmit, onChange }: BookingCreateProps) {
+export default function BookingCreate({ value, onSubmit, onChange, bookings = [], rooms = [], users = [], statuses = [], statusLoading = false }: BookingCreateProps) {
     const updateField = (field: keyof BookingCreateForm, nextValue: string | number) => {
         onChange({ ...value, [field]: nextValue })
     }
+
+    // Filter bookings untuk ruangan dan tanggal yang dipilih
+    const filteredBookings = bookings.filter(
+        b => b.room?.id === value.roomId && b.date === value.date
+    );
 
     return (
         <Paper sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
             <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
                 Create Booking
             </Typography>
+
+            {/* Tampilkan status booking ruangan pada tanggal yang dipilih */}
+            {value.roomId && value.date && (
+                <Box sx={{ mb: 2 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                        Status Ruangan pada {new Date(value.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}:
+                    </Typography>
+                    {filteredBookings.length === 0 ? (
+                        <Typography variant="body2" color="success.main">Ruangan kosong, belum ada booking.</Typography>
+                    ) : (
+                        filteredBookings.map((b, idx) => (
+                            <Typography key={idx} variant="body2" color="error.main">
+                                Dipinjam oleh {b.user?.name || '-'} jam {b.startTime} - {b.endTime}
+                            </Typography>
+                        ))
+                    )}
+                </Box>
+            )}
 
             <Box component="form" onSubmit={onSubmit}>
                 <Stack spacing={2}>
@@ -28,53 +67,49 @@ export default function BookingCreate({ value, onSubmit, onChange }: BookingCrea
                             value={value.roomId}
                             onChange={(event) => updateField('roomId', event.target.value)}
                         >
+                            {rooms.map((room: any) => (
+                                <MenuItem key={room.id} value={room.id}>{room.roomName}</MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
 
-                    {/* User ID Select */}
-                    <FormControl required fullWidth variant="outlined">
-                        <InputLabel id="user-label">Pengguna</InputLabel>
-                        <Select
-                            labelId="user-label"
-                            label="Pengguna"
-                            value={value.userId}
-                            onChange={(event) => updateField('userId', event.target.value)}
-                        >
-                        </Select>
-                    </FormControl>
-
-                    {/* Date */}
+                    {/* Nama Pengguna (Text Field) */}
                     <TextField
-                        label="Tanggal"
-                        type="date"
-                        value={value.date}
-                        onChange={(event) => updateField('date', event.target.value)}
+                        label="Nama Pengguna"
+                        value={value.userName || ''}
+                        onChange={(event) => updateField('userName', event.target.value)}
                         fullWidth
                         required
-                        InputLabelProps={{ shrink: true }}
                     />
 
+                    {/* Date */}
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DatePicker
+                            label="Tanggal"
+                            value={value.date ? new Date(value.date) : null}
+                            onChange={date => updateField('date', date ? date.toISOString().split('T')[0] : '')}
+                            slotProps={{ textField: { fullWidth: true, required: true } }}
+                            format="dd MMMM yyyy"
+                        />
+                    </LocalizationProvider>
+
                     {/* Start Time & End Time */}
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                        <TextField
-                            label="Waktu Mulai"
-                            type="time"
-                            value={value.startTime}
-                            onChange={(event) => updateField('startTime', event.target.value)}
-                            fullWidth
-                            required
-                            InputLabelProps={{ shrink: true }}
-                        />
-                        <TextField
-                            label="Waktu Selesai"
-                            type="time"
-                            value={value.endTime}
-                            onChange={(event) => updateField('endTime', event.target.value)}
-                            fullWidth
-                            required
-                            InputLabelProps={{ shrink: true }}
-                        />
-                    </Stack>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                            <TimePicker
+                                label="Waktu Mulai"
+                                value={value.startTime ? new Date(`1970-01-01T${value.startTime}`) : null}
+                                onChange={time => updateField('startTime', time ? time.toISOString().substr(11, 5) : '')}
+                                slotProps={{ textField: { fullWidth: true, required: true } }}
+                            />
+                            <TimePicker
+                                label="Waktu Selesai"
+                                value={value.endTime ? new Date(`1970-01-01T${value.endTime}`) : null}
+                                onChange={time => updateField('endTime', time ? time.toISOString().substr(11, 5) : '')}
+                                slotProps={{ textField: { fullWidth: true, required: true } }}
+                            />
+                        </Stack>
+                    </LocalizationProvider>
 
                     {/* Purpose */}
                     <TextField
@@ -87,17 +122,7 @@ export default function BookingCreate({ value, onSubmit, onChange }: BookingCrea
                         rows={3}
                     />
 
-                    {/* Status ID Select */}
-                    <FormControl required fullWidth variant="outlined">
-                        <InputLabel id="status-label">Status</InputLabel>
-                        <Select
-                            labelId="status-label"
-                            label="Status"
-                            value={value.statusId}
-                            onChange={(event) => updateField('statusId', event.target.value)}
-                        >
-                        </Select>
-                    </FormControl>
+                    {/* Status tidak ditampilkan saat create booking, statusId akan di-set otomatis di handleSubmit */}
 
                     <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mt: 2 }}>
                         <Button variant="outlined" type="reset">

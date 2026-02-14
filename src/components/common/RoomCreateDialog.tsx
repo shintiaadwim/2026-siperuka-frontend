@@ -1,4 +1,4 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box, Stack, FormControl, InputLabel, Select } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box, Stack, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import type { RoomCreateForm, RoomCreateDialogProps } from '../../types/room';
 
 export default function RoomCreateDialog({ open, value, onClose, onSubmit, onChange }: RoomCreateDialogProps) {
@@ -27,7 +27,7 @@ export default function RoomCreateDialog({ open, value, onClose, onSubmit, onCha
                             required
                         />
                     </Stack>
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 1 }}>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
                         <TextField
                             label="Kapasitas"
                             type='number'
@@ -47,12 +47,17 @@ export default function RoomCreateDialog({ open, value, onClose, onSubmit, onCha
                     <FormControl
                         required
                         fullWidth
+                        // sx={{ mb: 2 }}
                     >
-                        <InputLabel id="room-status-label">Status Ruangan</InputLabel>
+                        <InputLabel id="room-status-label" sx={{ backgroundColor: '#fff', padding: '0 6px' }}>Status Ruangan</InputLabel>
                         <Select
+                            labelId="room-status-label"
                             value={value.roomStatus}
                             onChange={(event) => updateField('roomStatus', event.target.value)}
                         >
+                            <MenuItem value="Available">Available</MenuItem>
+                            <MenuItem value="Maintenance">Maintenance</MenuItem>
+                            <MenuItem value="Reserved">Reserved</MenuItem>
                         </Select>
                     </FormControl>
                 </Box>

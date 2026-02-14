@@ -6,21 +6,16 @@ export default function useBookings() {
     const [bookings, setBookings] = useState<BookingListItem[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [total, setTotal] = useState<number>(0);
-    const [page, setPage] = useState<number>(1);
-    const [pageSize, setPageSize] = useState<number>(10);
+    // Hilangkan state pagination
     const [refreshFlag, setRefreshFlag] = useState<boolean>(false);
 
     // Fetch bookings
-    const fetchBookings = async (customPage?: number, customPageSize?: number) => {
+    const fetchBookings = async () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await getBookings(customPage ?? page, customPageSize ?? pageSize);
-            setBookings(res.data);
-            setTotal(res.total);
-            setPage(res.page);
-            setPageSize(res.pageSize);
+            const res = await getBookings();
+            setBookings(res);
         } catch (err: any) {
             setError(err.message || 'Gagal mengambil data booking');
         } finally {
@@ -57,11 +52,11 @@ export default function useBookings() {
     };
 
     // Update booking status
-    const handleUpdateBookingStatus = async (id: number, statusId: number, changeBy: string, note?: string) => {
+    const handleUpdateBookingStatus = async (id: number, statusId: number, note?: string) => {
         setLoading(true);
         setError(null);
         try {
-            await updateBookingStatus(id, statusId, changeBy, note);
+            await updateBookingStatus(id, statusId, note);
             setRefreshFlag(flag => !flag);
         } catch (err: any) {
             setError(err.message || 'Gagal mengupdate status booking');
@@ -88,17 +83,12 @@ export default function useBookings() {
     useEffect(() => {
         fetchBookings();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page, pageSize, refreshFlag]);
+    }, [refreshFlag]);
 
     return {
         bookings,
         loading,
         error,
-        total,
-        page,
-        pageSize,
-        setPage,
-        setPageSize,
         fetchBookings,
         createBooking: handleCreateBooking,
         updateBooking: handleUpdateBooking,
