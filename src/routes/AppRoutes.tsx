@@ -5,7 +5,9 @@ import Header from "../components/layouts/Header";
 import Sidebar from "../components/layouts/Sidebar";
 import DashboardPage from "../pages/DashboardPage";
 import RoomPage from "../pages/RoomPage";
+import RoomDetailPage from "../pages/RoomDetailPage";
 import BookingPage from "../pages/BookingPage";
+import BookingHistoryPage from "../pages/BookingHistoryPage";
 
 function AppLayout() {
     return (
@@ -13,7 +15,7 @@ function AppLayout() {
             <Header />
             <Box sx={{ display: 'flex', flexGrow: 1 }}>
                 <Sidebar />
-                <Box sx={{ flexGrow: 1 }}>
+                <Box sx={{ flexGrow: 1, width: '100%' }}>
                     <Toolbar />
                     <Content>
                         <Outlet />
@@ -32,7 +34,9 @@ export default function AppRoutes() {
                     <Route path="/" element={<Navigate to="/dashboard" replace />} />
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/rooms" element={<RoomPage />} />
+                    <Route path="/rooms/:id" element={<RoomDetailPage />} />
                     <Route path="/bookings" element={<BookingPage />} />
+                    <Route path="/booking-history" element={<BookingHistoryPage />} />
                 </Route>
             </Routes>
         </BrowserRouter>

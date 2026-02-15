@@ -1,11 +1,13 @@
-import { Box, Paper } from '@mui/material'
+import { Box, Container, Paper } from '@mui/material'
 
 export default function Content({ children }: { children: React.ReactNode }) {
     return (
-        <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
-            <Paper elevation={0} sx={{ p: 3, minHeight: '80vh' }}>
-                {children}
-            </Paper>
-        </Box>
+        <Container maxWidth={false} disableGutters>
+            <Box sx={{ flexGrow: 1, width: '100%', p: 3 }}>
+                <Paper elevation={0} sx={{ minHeight: '80vh', width: '100%' }}>
+                    {children}
+                </Paper>
+            </Box>
+        </Container>
     )
 }

@@ -22,8 +22,10 @@ interface BookingCreateProps {
     users?: any[];
     statuses?: any[];
     statusLoading?: boolean;
+    isEditing?: boolean;
+    onCancel?: () => void;
 }
-export default function BookingCreate({ value, onSubmit, onChange, bookings = [], rooms = [], users = [], statuses = [], statusLoading = false }: BookingCreateProps) {
+export default function BookingCreate({ value, onSubmit, onChange, bookings = [], rooms = [], users = [], statuses = [], statusLoading = false, isEditing = false, onCancel }: BookingCreateProps) {
     const updateField = (field: keyof BookingCreateForm, nextValue: string | number) => {
         onChange({ ...value, [field]: nextValue })
     }
@@ -36,7 +38,7 @@ export default function BookingCreate({ value, onSubmit, onChange, bookings = []
     return (
         <Paper sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
             <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-                Create Booking
+                {isEditing ? 'Edit Booking' : 'Create Booking'}
             </Typography>
 
             {/* Tampilkan status booking ruangan pada tanggal yang dipilih */}
@@ -57,6 +59,8 @@ export default function BookingCreate({ value, onSubmit, onChange, bookings = []
                 </Box>
             )}
 
+
+{/* form edit */}
             <Box component="form" onSubmit={onSubmit}>
                 <Stack spacing={2}>
                     <FormControl required fullWidth variant="outlined">
@@ -86,8 +90,17 @@ export default function BookingCreate({ value, onSubmit, onChange, bookings = []
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DatePicker
                             label="Tanggal"
-                            value={value.date ? new Date(value.date) : null}
-                            onChange={date => updateField('date', date ? date.toISOString().split('T')[0] : '')}
+                            value={value.date ? new Date(value.date + 'T00:00:00') : null}
+                            onChange={date => {
+                                if (date) {
+                                    const year = date.getFullYear();
+                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                    const day = String(date.getDate()).padStart(2, '0');
+                                    updateField('date', `${year}-${month}-${day}`);
+                                } else {
+                                    updateField('date', '');
+                                }
+                            }}
                             slotProps={{ textField: { fullWidth: true, required: true } }}
                             format="dd MMMM yyyy"
                         />
@@ -99,13 +112,29 @@ export default function BookingCreate({ value, onSubmit, onChange, bookings = []
                             <TimePicker
                                 label="Waktu Mulai"
                                 value={value.startTime ? new Date(`1970-01-01T${value.startTime}`) : null}
-                                onChange={time => updateField('startTime', time ? time.toISOString().substr(11, 5) : '')}
+                                onChange={time => {
+                                    if (time) {
+                                        const hours = String(time.getHours()).padStart(2, '0');
+                                        const minutes = String(time.getMinutes()).padStart(2, '0');
+                                        updateField('startTime', `${hours}:${minutes}`);
+                                    } else {
+                                        updateField('startTime', '');
+                                    }
+                                }}
                                 slotProps={{ textField: { fullWidth: true, required: true } }}
                             />
                             <TimePicker
                                 label="Waktu Selesai"
                                 value={value.endTime ? new Date(`1970-01-01T${value.endTime}`) : null}
-                                onChange={time => updateField('endTime', time ? time.toISOString().substr(11, 5) : '')}
+                                onChange={time => {
+                                    if (time) {
+                                        const hours = String(time.getHours()).padStart(2, '0');
+                                        const minutes = String(time.getMinutes()).padStart(2, '0');
+                                        updateField('endTime', `${hours}:${minutes}`);
+                                    } else {
+                                        updateField('endTime', '');
+                                    }
+                                }}
                                 slotProps={{ textField: { fullWidth: true, required: true } }}
                             />
                         </Stack>
@@ -122,14 +151,40 @@ export default function BookingCreate({ value, onSubmit, onChange, bookings = []
                         rows={3}
                     />
 
-                    {/* Status tidak ditampilkan saat create booking, statusId akan di-set otomatis di handleSubmit */}
+                    {/* Status ditampilkan hanya saat edit booking */}
+                    {isEditing && (
+                        <FormControl required fullWidth variant="outlined">
+                            <InputLabel id="status-label">Status Booking</InputLabel>
+                            <Select
+                                labelId="status-label"
+                                label="Status Booking"
+                                value={value.statusId || ''}
+                                onChange={(event) => updateField('statusId', event.target.value)}
+                                disabled={statusLoading}
+                            >
+                                {statuses.map((status: any) => (
+                                    <MenuItem key={status.id} value={status.id}>{status.statusName}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    )}
 
                     <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mt: 2 }}>
                         <Button variant="outlined" type="reset">
                             Reset
                         </Button>
+                        {isEditing && onCancel && (
+                            <Button variant="outlined" color="error" onClick={(e) => {
+                                e.preventDefault();
+                                if (window.confirm('Batal edit booking?')) {
+                                    onCancel();
+                                }
+                            }}>
+                                Cancel
+                            </Button>
+                        )}
                         <Button variant="contained" type="submit">
-                            Create Booking
+                            {isEditing ? 'Update Booking' : 'Create Booking'}
                         </Button>
                     </Stack>
                 </Stack>

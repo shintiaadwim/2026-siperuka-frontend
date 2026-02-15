@@ -7,17 +7,12 @@ import BookingTable from "../components/common/BookingTable";
 import useBookings from "../hooks/useBookings";
 import useRooms from "../hooks/useRooms";
 import useUsers from "../hooks/useUsers";
-import { createUser, getUsers } from '../services/userService';
+import { createUser, updateUser } from '../services/userService';
 
 export default function BookingPage() {
   const { statuses: bookingStatuses, loading: statusLoading } = useBookingStatuses();
   const {
-    bookings, loading, error,
-    createBooking,
-    // ...tambahkan handler lain jika perlu
-    updateBookingStatus,
-    updateBooking,
-    deleteBooking,
+    bookings, loading, error, createBooking, updateBookingStatus, updateBooking, deleteBooking,
   } = useBookings();
   // State untuk edit booking
   const [editingBooking, setEditingBooking] = React.useState<any | null>(null);
@@ -25,7 +20,17 @@ export default function BookingPage() {
 
   // Handler edit booking
   const handleEdit = (booking: any) => {
-    setEditingBooking(booking);
+    const formData = {
+      roomId: booking.roomId.toString(),
+      userId: booking.userId.toString(),
+      userName: booking.user?.name || '',
+      date: booking.date,
+      startTime: booking.startTime,
+      endTime: booking.endTime,
+      purpose: booking.purpose,
+      statusId: booking.statusId, // Keep as number for Select component
+    };
+    setEditingBooking({ ...booking, ...formData });
     setShowEditForm(true);
   };
 
@@ -34,9 +39,25 @@ export default function BookingPage() {
     e.preventDefault();
     if (!editingBooking) return;
     try {
-      await updateBooking(editingBooking.id, editingBooking);
+      // Jika userName berubah, update user di backend
+      if (editingBooking.user && editingBooking.user.name !== editingBooking.userName) {
+        await updateUser(Number(editingBooking.userId), editingBooking.userName, editingBooking.user.role || 'USER');
+      }
+      // Persiapkan data untuk update
+      const updateData = {
+        roomId: Number(editingBooking.roomId),
+        userId: Number(editingBooking.userId), // Convert to number
+        statusId: Number(editingBooking.statusId),
+        date: editingBooking.date,
+        startTime: editingBooking.startTime,
+        endTime: editingBooking.endTime,
+        purpose: editingBooking.purpose,
+      };
+
+      await updateBooking(editingBooking.id, updateData);
       setShowEditForm(false);
       setEditingBooking(null);
+      alert('Booking berhasil diupdate');
     } catch (err) {
       alert('Gagal update booking: ' + (err.message || err));
     }
@@ -179,6 +200,10 @@ export default function BookingPage() {
             statuses={bookingStatuses}
             statusLoading={statusLoading}
             isEditing
+            onCancel={() => {
+              setShowEditForm(false);
+              setEditingBooking(null);
+            }}
           />
         )}
       </Stack>

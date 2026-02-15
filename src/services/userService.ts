@@ -46,3 +46,19 @@ export async function createUser(name: string, email?: string): Promise<any> {
     }
     return response.json();
 }
+
+// Update user
+export async function updateUser(id: number, name: string, role: string = 'USER'): Promise<any> {
+    ensureBaseUrl();
+    const response = await fetch(`${normalizedBaseUrl}/booking/users/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, role }),
+    });
+    if (!response.ok) {
+        throw new Error('Failed to update user');
+    }
+    return response.json();
+}

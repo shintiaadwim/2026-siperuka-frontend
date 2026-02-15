@@ -2,12 +2,14 @@ import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } fr
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import HistoryIcon from "@mui/icons-material/History";
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
   { name: "Dashboard", path: "/dashboard", icon: <DashboardIcon /> },
   { name: "Booking", path: "/bookings", icon: <BookOnlineIcon /> },
   { name: "Room", path: "/rooms", icon: <MeetingRoomIcon /> },
+  { name: "Booking History", path: "/booking-history", icon: <HistoryIcon /> },
 ];
 
 export default function Sidebar() {
