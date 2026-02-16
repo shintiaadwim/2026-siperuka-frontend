@@ -13,14 +13,14 @@ export default function RoomCreateDialog({ open, value, onClose, onSubmit, onCha
                 <Box component="form" id="room-create-form" onSubmit={onSubmit}>
                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
                         <TextField
-                            label="Kode Ruangan"
+                            label="Room Code"
                             value={value.roomCode}
                             onChange={(event) => updateField('roomCode', event.target.value)}
                             fullWidth
                             required
                         />
                         <TextField
-                            label="Nama Ruangan"
+                            label="Room Name"
                             value={value.roomName}
                             onChange={(event) => updateField('roomName', event.target.value)}
                             fullWidth
@@ -29,7 +29,7 @@ export default function RoomCreateDialog({ open, value, onClose, onSubmit, onCha
                     </Stack>
                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
                         <TextField
-                            label="Kapasitas"
+                            label="Capacity"
                             type='number'
                             value={value.capacity}
                             onChange={(event) => updateField('capacity', event.target.value)}
@@ -38,7 +38,7 @@ export default function RoomCreateDialog({ open, value, onClose, onSubmit, onCha
                             required
                         />
                         <TextField
-                            label="Lokasi"
+                            label="Location"
                             value={value.location}
                             onChange={(event) => updateField('location', event.target.value)}
                             fullWidth
@@ -47,9 +47,8 @@ export default function RoomCreateDialog({ open, value, onClose, onSubmit, onCha
                     <FormControl
                         required
                         fullWidth
-                        // sx={{ mb: 2 }}
                     >
-                        <InputLabel id="room-status-label" sx={{ backgroundColor: '#fff', padding: '0 6px' }}>Status Ruangan</InputLabel>
+                        <InputLabel id="room-status-label" sx={{ backgroundColor: '#fff', padding: '0 6px' }}>Room Status</InputLabel>
                         <Select
                             labelId="room-status-label"
                             value={value.roomStatus}
@@ -65,7 +64,7 @@ export default function RoomCreateDialog({ open, value, onClose, onSubmit, onCha
 
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>
-                <Button type="submit" form="room-create-form">
+                <Button type="submit" form="room-create-form" variant="contained">
                     Create
                 </Button>
             </DialogActions>

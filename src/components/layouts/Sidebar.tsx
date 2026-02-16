@@ -1,9 +1,15 @@
-import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import BookOnlineIcon from "@mui/icons-material/BookOnline";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import HistoryIcon from "@mui/icons-material/History";
 import { Link, useLocation } from "react-router-dom";
+
+interface SidebarProps {
+  open: boolean;
+  onClose: () => void;
+  variant?: 'permanent' | 'temporary';
+}
 
 const menuItems = [
   { name: "Dashboard", path: "/dashboard", icon: <DashboardIcon /> },
@@ -12,26 +18,28 @@ const menuItems = [
   { name: "Booking History", path: "/booking-history", icon: <HistoryIcon /> },
 ];
 
-export default function Sidebar() {
-  const location = useLocation();
 
+export default function Sidebar({ open, onClose, variant }: SidebarProps) {
+  const location = useLocation();
+  const isTemporary = variant === 'temporary';
   return (
     <Drawer
-      variant="permanent"
+      variant={typeof variant === 'string' ? variant : 'temporary'}
+      open={open}
+      onClose={onClose}
       anchor="left"
+      ModalProps={{ keepMounted: true }}
       sx={{
         width: 220,
         flexShrink: 0,
-        top: '64px', // offset setinggi AppBar (default AppBar MUI height = 64px)
-        height: 'calc(100% - 64px)',
+        display: variant === 'permanent' ? { xs: 'none', md: 'block' } : undefined,
         "& .MuiDrawer-paper": {
           width: 220,
           boxSizing: "border-box",
-          top: '64px',
-          height: 'calc(100% - 64px)',
         },
       }}
     >
+      <Toolbar />
       <List>
         {menuItems.map((item) => (
           <ListItem key={item.path} disablePadding>
@@ -39,9 +47,10 @@ export default function Sidebar() {
               component={Link}
               to={item.path}
               selected={location.pathname === item.path}
+              onClick={isTemporary ? () => { console.log('Sidebar menu clicked, closing drawer'); onClose(); } : undefined}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.name} />
+              <ListItemText primary={item.name} primaryTypographyProps={{ fontSize: 14 }} />
             </ListItemButton>
           </ListItem>
         ))}

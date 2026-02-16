@@ -18,9 +18,9 @@ export interface BookingListItem {
         roomName: string;
     };
     user?: {
-        id: number;
+        id?: number;
         name: string;
-        email: string;
+        email?: string;
     };
     status?: {
         id: number;
@@ -75,3 +75,24 @@ export type BookingTableProps = {
     pendingStatusId: number | null;
     isLoading: boolean;
 }; // Props untuk tabel booking
+
+// Form interfaces for dialog components
+export interface BookingCreateForm {
+    roomId: string;
+    userName: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    purpose: string;
+}
+
+export interface BookingEditForm extends BookingCreateForm {
+    id: number;
+    userId: number;
+    statusId: string;
+    user: {
+        id?: number;
+        name: string;
+        email?: string;
+    };
+}

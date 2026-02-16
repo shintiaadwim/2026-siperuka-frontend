@@ -1,5 +1,9 @@
-// import React from "react";
+import DashboardHero from '../components/common/DashboardHero';
 
 export default function DashboardPage() {
-  return <div>Welcome to SIPERUKA!</div>;
+  return (
+    <>
+      <DashboardHero />
+    </>
+  );
 }

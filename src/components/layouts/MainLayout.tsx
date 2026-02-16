@@ -12,7 +12,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             <CssBaseline />
             <Header />
             <Box sx={{ flexGrow: 1 }}>
-                <Sidebar />
+                <Sidebar open={false} onClose={function (): void {
+                    throw new Error('Function not implemented.');
+                } } />
                 <Toolbar />
                 {children}
             </Box>

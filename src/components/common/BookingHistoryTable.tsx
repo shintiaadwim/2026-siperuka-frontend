@@ -9,20 +9,19 @@ interface Props {
 
 export default function BookingHistoryTable({ history, page, pageSize }: Props) {
     return (
-        <TableContainer sx={{ border: '1px solid #ccc', borderRadius: 2 }}>
+        <TableContainer sx={{ border: '1px solid #ccc', borderRadius: 2, '& td, & th': { fontSize: '12px' } }}>
             <Table size="small">
                 <TableHead>
                     <TableRow>
                         <TableCell>NO.</TableCell>
                         <TableCell>ROOM</TableCell>
                         <TableCell>USERNAME</TableCell>
-                        <TableCell>BOOKING DATE</TableCell>
-                        <TableCell>TIME</TableCell>
+                        <TableCell>DATE & TIME</TableCell>
                         <TableCell>PURPOSE</TableCell>
                         <TableCell>STATUS CHANGED</TableCell>
                         <TableCell>OLD STATUS</TableCell>
                         <TableCell>NEW STATUS</TableCell>
-                        <TableCell>CHANGE TIME</TableCell>
+                        <TableCell>CHANGE DATE & TIME</TableCell>
                         <TableCell>NOTE</TableCell>
                     </TableRow>
                 </TableHead>
@@ -47,9 +46,12 @@ export default function BookingHistoryTable({ history, page, pageSize }: Props) 
                                 <TableCell>{item.booking?.user?.name || '-'}</TableCell>
                                 <TableCell>
                                     {item.booking?.date ? new Date(item.booking.date).toLocaleDateString('id-ID') : '-'}
-                                </TableCell>
-                                <TableCell>
-                                    {item.booking?.startTime && item.booking?.endTime ? `${item.booking.startTime} - ${item.booking.endTime}` : '-'}
+                                    {(item.booking?.startTime && item.booking?.endTime) && (
+                                        <>
+                                            <br />
+                                            <span>{`${item.booking.startTime.slice(0, 5)} - ${item.booking.endTime.slice(0, 5)}`}</span>
+                                        </>
+                                    )}
                                 </TableCell>
                                 <TableCell>{item.booking?.purpose || '-'}</TableCell>
                                 <TableCell>
@@ -60,24 +62,16 @@ export default function BookingHistoryTable({ history, page, pageSize }: Props) 
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    <Typography variant="caption">
-                                        {item.oldValue || item.oldStatus || '-'}
-                                    </Typography>
+                                    {item.oldValue || item.oldStatus || '-'}
                                 </TableCell>
                                 <TableCell>
-                                    <Typography variant="caption">
-                                        {item.newValue || item.newStatus || '-'}
-                                    </Typography>
+                                    {item.newValue || item.newStatus || '-'}
                                 </TableCell>
                                 <TableCell>
-                                    <Typography variant="caption">
-                                        {item.changedAt ? new Date(item.changedAt).toLocaleString('id-ID') : '-'}
-                                    </Typography>
+                                    {item.changedAt ? new Date(item.changedAt).toLocaleString('id-ID') : '-'}
                                 </TableCell>
                                 <TableCell>
-                                    <Typography variant="caption">
-                                        {item.note || '-'}
-                                    </Typography>
+                                    {item.note || '-'}
                                 </TableCell>
                             </TableRow>
                         ))

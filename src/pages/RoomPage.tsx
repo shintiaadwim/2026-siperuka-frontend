@@ -36,7 +36,7 @@ export default function RoomPage() {
         </Button>
       </Stack>
 
-      <TableContainer sx={{ border: '1px solid #ccc', borderRadius: 2, width: '100%' }}>
+      <TableContainer sx={{ border: '1px solid #ccc', borderRadius: 2, width: '100%', '& td, & th': { fontSize: '14px' } }}>
         <Table size="small">
           <TableHead>
             <TableRow sx={{ height: 50 }}>
@@ -68,7 +68,7 @@ export default function RoomPage() {
               if (rooms.length === 0) {
                 return (
                   <TableRow>
-                    <TableCell colSpan={7} align="center">Tidak ada data ruangan</TableCell>
+                    <TableCell colSpan={7} align="center">No rooms available</TableCell>
                   </TableRow>
                 );
               }
@@ -87,7 +87,12 @@ export default function RoomPage() {
                         color={getRoomStatusColor(room.roomStatus)}
                         variant="outlined"
                         size="small"
-                        sx={{ fontWeight: 600, letterSpacing: 1 }}
+                        sx={{
+                          fontWeight: 600,
+                          letterSpacing: 1,
+                          minWidth: 120,
+                          justifyContent: 'center'
+                        }}
                       />
                     </TableCell>
                     <TableCell align="center">
@@ -115,7 +120,7 @@ export default function RoomPage() {
           </TableBody>
         </Table>
       </TableContainer>
-      
+
 
       <RoomCreateDialog
         open={open}

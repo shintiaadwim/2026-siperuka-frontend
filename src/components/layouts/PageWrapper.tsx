@@ -9,7 +9,7 @@ export default function PageWrapper({
 }) {
     return (
         <Stack component="section" spacing={2}>
-            <Typography variant="h3" sx={{ fontWeight: 700 }}>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>
                 {title}
             </Typography>
             {children}

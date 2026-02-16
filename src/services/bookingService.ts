@@ -9,14 +9,26 @@ function ensureBaseUrl() {
     }
 }
 // Get all bookings with pagination
-export async function getBookings() {
+export async function getBookings(page: number = 1, pageSize: number = 10) {
     ensureBaseUrl();
     const url = new URL('/api/booking', normalizedBaseUrl);
+    url.searchParams.set('page', String(page));
+    url.searchParams.set('pageSize', String(pageSize));
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error('Failed to fetch bookings');
     }
-    return (await response.json()) as BookingListResponse[];
+    const res = await response.json();
+    // Jika response array langsung, bungkus sebagai BookingListResponse
+    if (Array.isArray(res)) {
+        return {
+            data: res,
+            total: res.length,
+            page: 1,
+            pageSize: res.length
+        };
+    }
+    return res as BookingListResponse;
 }
 // Create a new booking
 export async function createBooking(dto: BookingCreateDto) {
@@ -42,9 +54,19 @@ export async function updateBooking(id: number, dto: BookingCreateDto) {
         body: JSON.stringify(dto),
     });
     if (!response.ok) {
-        throw new Error('Failed to update booking');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to update booking');
     }
-    return (await response.json()) as BookingListItem;
+    const text = await response.text();
+    if (!text) {
+        return dto as any; // Return the dto if backend returns empty response
+    }
+    try {
+        return JSON.parse(text) as BookingListItem;
+    } catch (e) {
+        console.error('Failed to parse response:', text);
+        return dto as any;
+    }
 }
 // Update booking status
 export async function updateBookingStatus(id: number, newStatusId: number, note?: string) {
@@ -56,9 +78,18 @@ export async function updateBookingStatus(id: number, newStatusId: number, note?
         body: JSON.stringify({ newStatusId, note }),
     });
     if (!response.ok) {
-        throw new Error('Failed to update booking status');
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to update booking status');
     }
-    return (await response.json()) as BookingListItem;
+    const text = await response.text();
+    if (!text) {
+        return true as any;
+    }
+    try {
+        return JSON.parse(text) as BookingListItem;
+    } catch (e) {
+        return true as any;
+    }
 }
 // Delete a booking
 export async function deleteBooking(id: number) {
