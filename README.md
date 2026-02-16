@@ -17,7 +17,7 @@ This application is designed to manage campus room bookings online. Users can re
 
 ## Tech Stack
 
-* React + TypeScript
+* React + TypeScript v19.2.4
 * Vite (build tool)
 * MUI (Material UI)
 * React Router (navigation)
