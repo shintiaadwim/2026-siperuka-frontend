@@ -52,7 +52,7 @@ export default function DashboardHero() {
                         mx: 'auto',
                     }}
                 >
-                    "Room Booking Management System"<br />
+                    "Campus Room Booking Management System"<br />
                     An ASP.NET (backend) and React TypeScript (frontend) web application using Material UI as an interface design framework. This system was developed to support centralized, documented, and modern software development standards-compliant campus space rental management.<br />
                 </Typography>
 
