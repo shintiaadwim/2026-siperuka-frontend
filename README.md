@@ -4,7 +4,7 @@ Frontend application for the **Campus Room Booking System (Siperuka)** built usi
 
 ## Description
 
-This application is designed to manage campus room bookings online. Users can reserve rooms, view booking history, manage booking statuses, and administer room.
+This application is designed to manage campus room bookings online. Users can reserve rooms, view booking history, manage booking statuses, administer room and user.
 
 ## Main Features
 
@@ -15,14 +15,36 @@ This application is designed to manage campus room bookings online. Users can re
 * **User Management:** Admins can manage system users.
 * **Pagination & Filter:** Booking and history data can be paginated and filtered.
 
-## Technologies
+## Tech Stack
 
-* React + TypeScript
+* React + TypeScript v19.2.4
 * Vite (build tool)
 * MUI (Material UI)
 * React Router (navigation)
 
-## Installation & Running the Project
+---
+
+## Environment Variables
+
+This project requires environment variables to connect to the backend API.
+
+Create a `.env` file in the root directory and add the following:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+Make sure the backend server is running before starting the frontend application.
+
+If needed, you can create a `.env.example` file:
+
+```env
+VITE_API_URL=your_backend_url_here
+```
+
+---
+
+## Installation
 
 1. **Clone the repository**
 
@@ -37,11 +59,35 @@ This application is designed to manage campus room bookings online. Users can re
    npm install
    ```
 
-3. **Run the application**
+---
 
-   ```bash
-   npm run dev
-   ```
+## Running the Application
+
+### Development Mode
+
+```bash
+npm run dev
+```
+
+To build the project for production:
+
+```bash
+npm run build
+```
+
+To preview the production build locally:
+
+```bash
+npm run preview
+```
+
+The application will run on:
+
+```
+http://localhost:5173
+```
+
+---
 
 ## Important Folder Structure
 
@@ -53,3 +99,4 @@ This application is designed to manage campus room bookings online. Users can re
 ---
 
 © 2026 Siperuka
+---
