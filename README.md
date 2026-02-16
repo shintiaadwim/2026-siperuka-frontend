@@ -15,7 +15,7 @@ This application is designed to manage campus room bookings online. Users can re
 * **User Management:** Admins can manage system users.
 * **Pagination & Filter:** Booking and history data can be paginated and filtered.
 
-## Technologies
+## Tech Stack
 
 * React + TypeScript
 * Vite (build tool)
